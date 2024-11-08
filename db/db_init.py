@@ -42,11 +42,12 @@ c.execute("""CREATE TABLE book(
 )""")
 
 c.execute("""CREATE TABLE warehouse_book(
-                    storage_id      UUID NOT NULL,
+                    warehouse_id      UUID NOT NULL,
                     book_id         UUID NOT NULL,
                     quantity        INTEGER,
-                    PRIMARY KEY (storage_id, book_id),
-                    FOREIGN KEY(book_id) REFERENCES book(id)
+                    PRIMARY KEY (warehouse_id, book_id),
+                    FOREIGN KEY(book_id) REFERENCES book(id),
+                    FOREIGN KEY(warehouse_id) REFERENCES warehouse(id)
 )""")
 
 c.execute("""CREATE TABLE rental (
