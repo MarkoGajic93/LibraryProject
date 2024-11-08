@@ -10,7 +10,35 @@
     </div>
     <div class="col-lg-9">
       <div class="row my-5 card-wrapper">
-        <h1 class="offset-lg-3">No items to show.</h1>
+        {% if books %}
+        {% for book in books %}
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="#">{{ book.title }}</a>
+              </h4>
+              <h5>{{ book.author }}</h5>
+              <p class="card-text">Published: {{ book.year_published }}</p>
+            </div>
+            <div class="card-footer">
+              <small class="text-muted">
+                Available:
+              </small>
+              <br>
+              {% for k, v in book.warehouses.items() %}
+              <small class="text-muted">
+                {{ k }} -> {{ v }}
+              </small>
+              <br>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h1 class="offset-lg-3">No books to show.</h1>
+        {% endif %}
       </div>
     </div>
   </div>
