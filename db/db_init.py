@@ -8,7 +8,7 @@ c = conn.cursor()
 
 c.execute("DROP TABLE IF EXISTS member CASCADE")
 c.execute("DROP TABLE IF EXISTS author CASCADE")
-c.execute("DROP TABLE IF EXISTS warehouse")
+c.execute("DROP TABLE IF EXISTS warehouse CASCADE")
 c.execute("DROP TABLE IF EXISTS book CASCADE")
 c.execute("DROP TABLE IF EXISTS warehouse_book")
 c.execute("DROP TABLE IF EXISTS rental CASCADE")
