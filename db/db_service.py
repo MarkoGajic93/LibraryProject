@@ -7,7 +7,7 @@ def get_db():
         g.db = psycopg2.connect(current_app.config["DATABASE"])
     return g.db
 
-def close_db():
+def close_db(exception=None):
     db = g.pop("db", None)
     if db is not None:
         db.close()
