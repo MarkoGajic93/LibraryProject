@@ -6,12 +6,12 @@ db_uri = DevelopmentConfig.DATABASE
 conn = psycopg2.connect(db_uri)
 c = conn.cursor()
 
-c.execute("DROP TABLE IF EXISTS member")
-c.execute("DROP TABLE IF EXISTS author")
+c.execute("DROP TABLE IF EXISTS member CASCADE")
+c.execute("DROP TABLE IF EXISTS author CASCADE")
 c.execute("DROP TABLE IF EXISTS warehouse")
-c.execute("DROP TABLE IF EXISTS book")
+c.execute("DROP TABLE IF EXISTS book CASCADE")
 c.execute("DROP TABLE IF EXISTS warehouse_book")
-c.execute("DROP TABLE IF EXISTS rental")
+c.execute("DROP TABLE IF EXISTS rental CASCADE")
 c.execute("DROP TABLE IF EXISTS rental_book")
 
 c.execute("""CREATE TABLE member(
