@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    FLASK_SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
+    SECRET_KEY = os.environ.get("FLASK_SECRET_KEY")
     POSTGRES_USER = os.environ.get("POSTGRES_USER")
     POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 

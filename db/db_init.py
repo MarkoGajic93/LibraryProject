@@ -8,7 +8,7 @@ c = conn.cursor()
 
 c.execute("DROP TABLE IF EXISTS member CASCADE")
 c.execute("DROP TABLE IF EXISTS author CASCADE")
-c.execute("DROP TABLE IF EXISTS warehouse")
+c.execute("DROP TABLE IF EXISTS warehouse CASCADE")
 c.execute("DROP TABLE IF EXISTS book CASCADE")
 c.execute("DROP TABLE IF EXISTS warehouse_book")
 c.execute("DROP TABLE IF EXISTS rental CASCADE")
@@ -42,11 +42,12 @@ c.execute("""CREATE TABLE book(
 )""")
 
 c.execute("""CREATE TABLE warehouse_book(
-                    storage_id      UUID NOT NULL,
+                    warehouse_id      UUID NOT NULL,
                     book_id         UUID NOT NULL,
                     quantity        INTEGER,
-                    PRIMARY KEY (storage_id, book_id),
-                    FOREIGN KEY(book_id) REFERENCES book(id)
+                    PRIMARY KEY (warehouse_id, book_id),
+                    FOREIGN KEY(book_id) REFERENCES book(id) ON DELETE CASCADE,
+                    FOREIGN KEY(warehouse_id) REFERENCES warehouse(id) ON DELETE CASCADE
 )""")
 
 c.execute("""CREATE TABLE rental (
