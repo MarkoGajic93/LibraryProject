@@ -33,3 +33,6 @@ class NewBookForm(FlaskForm):
             self.author.choices = options
         if field == "warehouse":
             self.warehouse.choices = options
+
+class DeleteAllBooksForm(FlaskForm):
+    submit = SubmitField("Delete all copies")

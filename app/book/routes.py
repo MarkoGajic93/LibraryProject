@@ -4,7 +4,7 @@ from flask import render_template, flash, url_for
 from werkzeug.utils import redirect
 
 from app.book import book_bp
-from app.book.forms import NewBookForm
+from app.book.forms import NewBookForm, DeleteAllBooksForm
 from db.db_service import get_db
 
 
@@ -54,11 +54,27 @@ def _setup_form(cursor) -> NewBookForm:
 def book(book_id: uuid.UUID):
     conn = get_db()
     cursor = conn.cursor()
+    delete_all_books_form = DeleteAllBooksForm()
+
     book_data = get_book_data(cursor, book_id)
     book_dict = {}
     if book_data:
         book_dict = next(iter(generate_book_dict(book_data).values()))
-    return render_template("book.html", book=book_dict)
+    return render_template("book.html", book=book_dict, deleteAllBooksForm=delete_all_books_form)
+
+@book_bp.route("/delete_all/<uuid:book_id>", methods=["POST"])
+def delete_all(book_id: uuid.UUID):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""SELECT id, title FROM book WHERE id=%s""", (str(book_id),))
+    book_db_id, title = cursor.fetchone()
+    if book_db_id:
+        cursor.execute("""DELETE FROM book WHERE id=%s""", (book_db_id,))
+        conn.commit()
+        flash(f"Book {title} deleted successfully from all warehouses.", "success")
+    else:
+        flash(f"Book {title} doesnt exist.", "danger")
+    return redirect(url_for("home.home"))
 
 def get_book_data(cursor, book_id=None) -> list[tuple]:
     cursor.execute("""SELECT b.id, b.title, b.year_published, a.name, w.name, wb.quantity FROM book AS b
