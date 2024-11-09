@@ -42,6 +42,5 @@ class EditBookWarehouseCopies(FlaskForm):
     warehouse = SelectField("Warehouse")
     quantity = IntegerField("Quantity",
                             validators=[InputRequired("Input is required!"),
-                                        DataRequired("Data is required!"),
                                         NumberRange(min=0, message="Quantity must be a non-negative integer.")])
     submit = SubmitField("Submit")
