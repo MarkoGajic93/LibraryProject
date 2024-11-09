@@ -18,4 +18,7 @@ def create_app(config_env = app_env):
     from app.book import book_bp
     app.register_blueprint(book_bp, url_prefix="/books")
 
+    from app.author import author_bp
+    app.register_blueprint(author_bp, url_prefix="/authors")
+
     return app
