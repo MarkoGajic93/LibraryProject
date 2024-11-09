@@ -1,3 +1,5 @@
+import uuid
+
 from flask import render_template, flash, url_for
 from werkzeug.utils import redirect
 
@@ -42,9 +44,46 @@ def add_new():
 
     return render_template("new_book.html", form=form)
 
-
 def _setup_form(cursor) -> NewBookForm:
     form = NewBookForm()
     form.set_choices(cursor, "author")
     form.set_choices(cursor, "warehouse")
     return form
+
+@book_bp.route("/<uuid:book_id>")
+def book(book_id: uuid.UUID):
+    conn = get_db()
+    cursor = conn.cursor()
+    book_data = get_book_data(cursor, book_id)
+    book_dict = {}
+    if book_data:
+        book_dict = next(iter(generate_book_dict(book_data).values()))
+    return render_template("book.html", book=book_dict)
+
+def get_book_data(cursor, book_id=None) -> list[tuple]:
+    cursor.execute("""SELECT b.id, b.title, b.year_published, a.name, w.name, wb.quantity FROM book AS b
+                      INNER JOIN author AS a ON b.author_id=a.id
+                      INNER JOIN warehouse_book AS wb ON wb.book_id=b.id
+                      INNER JOIN warehouse AS w ON w.id=wb.warehouse_id WHERE b.id=COALESCE(%s, b.id)""",
+                   (str(book_id),) if book_id is not None else (None,))
+    return cursor.fetchall()
+
+def generate_book_dict(data: list[tuple]) -> dict:
+    book_dict = {}
+    for row in data:
+        book_id = row[0]
+        title = row[1]
+        year_published = row[2]
+        author = row[3]
+        warehouse = row[4]
+        quantity = row[5]
+        if book_id not in book_dict:
+            book_dict[book_id] = {
+                'id': book_id,
+                'title': title,
+                'year_published': year_published,
+                'author': author,
+                'warehouses': {}
+            }
+        book_dict[book_id]['warehouses'][warehouse] = quantity
+    return book_dict
