@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields.choices import SelectField
 from wtforms.fields.numeric import IntegerField
 from wtforms.fields.simple import StringField, SubmitField
-from wtforms.validators import InputRequired, DataRequired
+from wtforms.validators import InputRequired, DataRequired, NumberRange
 
 
 class NewBookForm(FlaskForm):
@@ -22,7 +22,8 @@ class NewBookForm(FlaskForm):
 
     quantity = IntegerField("Quantity",
                             validators=[InputRequired("Input is required!"),
-                                        DataRequired("Data is required!")])
+                                        DataRequired("Data is required!"),
+                                        NumberRange(min=1, message="Quantity must be a positive integer.")])
 
     submit = SubmitField("Add book")
 
@@ -36,3 +37,11 @@ class NewBookForm(FlaskForm):
 
 class DeleteAllBooksForm(FlaskForm):
     submit = SubmitField("Delete all copies")
+
+class EditBookWarehouseCopies(FlaskForm):
+    warehouse = SelectField("Warehouse")
+    quantity = IntegerField("Quantity",
+                            validators=[InputRequired("Input is required!"),
+                                        DataRequired("Data is required!"),
+                                        NumberRange(min=0, message="Quantity must be a non-negative integer.")])
+    submit = SubmitField("Submit")
