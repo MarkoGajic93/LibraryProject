@@ -46,8 +46,8 @@ c.execute("""CREATE TABLE warehouse_book(
                     book_id         UUID NOT NULL,
                     quantity        INTEGER,
                     PRIMARY KEY (warehouse_id, book_id),
-                    FOREIGN KEY(book_id) REFERENCES book(id),
-                    FOREIGN KEY(warehouse_id) REFERENCES warehouse(id)
+                    FOREIGN KEY(book_id) REFERENCES book(id) ON DELETE CASCADE,
+                    FOREIGN KEY(warehouse_id) REFERENCES warehouse(id) ON DELETE CASCADE
 )""")
 
 c.execute("""CREATE TABLE rental (
