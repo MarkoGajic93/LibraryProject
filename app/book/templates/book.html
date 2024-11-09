@@ -13,7 +13,6 @@
   </div>
   <div class="col-lg-9">
     <div class="card mt-4">
-      {% if book %}
       <div class="card-body">
         <h3 class="card-title">{{ book.title }}</h3>
         <h4>{{ book.author }}</h4>
@@ -25,9 +24,6 @@
         </h4>
         {% endfor %}
       </div>
-      {% else %}
-      <h1 class="offset-lg-3">The book doesnt exist.</h1>
-      {% endif %}
     </div>
   </div>
 </div>
