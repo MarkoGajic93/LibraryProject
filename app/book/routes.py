@@ -111,7 +111,7 @@ def manage_copies(book_id: uuid.UUID):
         return redirect(url_for("home.home"))
 
 def get_book_data(cursor, book_id=None) -> list[tuple]:
-    cursor.execute("""SELECT b.id, b.title, b.year_published, a.name, w.name, wb.quantity FROM book AS b
+    cursor.execute("""SELECT b.id, b.title, b.year_published, a.name, a.id, w.name, wb.quantity FROM book AS b
                       INNER JOIN author AS a ON b.author_id=a.id
                       INNER JOIN warehouse_book AS wb ON wb.book_id=b.id
                       INNER JOIN warehouse AS w ON w.id=wb.warehouse_id WHERE b.id=COALESCE(%s, b.id)""",
@@ -125,14 +125,16 @@ def generate_book_dict(data: list[tuple]) -> dict:
         title = row[1]
         year_published = row[2]
         author = row[3]
-        warehouse = row[4]
-        quantity = row[5]
+        author_id = row[4]
+        warehouse = row[5]
+        quantity = row[6]
         if book_id not in book_dict:
             book_dict[book_id] = {
                 'id': book_id,
                 'title': title,
                 'year_published': year_published,
                 'author': author,
+                'author_id': author_id,
                 'warehouses': {}
             }
         book_dict[book_id]['warehouses'][warehouse] = quantity

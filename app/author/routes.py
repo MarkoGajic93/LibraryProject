@@ -16,25 +16,28 @@ def author(author_id: uuid.UUID):
                       LEFT JOIN book AS b ON a.id=b.author_id
                       WHERE a.id=%s""", (str(author_id),))
     author_in_db = cursor.fetchall()
-    print(author_in_db)
     author_dict = {}
-    for row in author_in_db:
-        id_of_author = row[0]
-        name = row[1]
-        biography = row[2]
-        id_of_book = row[3]
-        book_title = row[4]
-        if id_of_author not in author_dict:
-            author_dict[id_of_author] = {
-                'id': id_of_author,
-                'name': name,
-                'biography': biography,
-                'books': []
-            }
-        if id_of_book is not None:
-            author_dict[id_of_author]['books'].append({id_of_book: book_title})
-    author_dict = next(iter(author_dict.values()))
-    return render_template("author.html", author=author_dict)
+    if author_in_db:
+        for row in author_in_db:
+            id_of_author = row[0]
+            name = row[1]
+            biography = row[2]
+            id_of_book = row[3]
+            book_title = row[4]
+            if id_of_author not in author_dict:
+                author_dict[id_of_author] = {
+                    'id': id_of_author,
+                    'name': name,
+                    'biography': biography,
+                    'books': []
+                }
+            if id_of_book is not None:
+                author_dict[id_of_author]['books'].append({id_of_book: book_title})
+        author_dict = next(iter(author_dict.values()))
+        return render_template("author.html", author=author_dict)
+    else:
+        flash("That author doesnt exist.", "danger")
+        return redirect(url_for("author.view_all"))
 
 @author_bp.route("/")
 def view_all():

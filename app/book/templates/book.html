@@ -15,7 +15,7 @@
     <div class="card mt-4">
       <div class="card-body">
         <h3 class="card-title">{{ book.title }}</h3>
-        <h4>{{ book.author }}</h4>
+        <a href="{{ url_for('author.author', author_id=book.author_id) }}"><h4>{{ book.author }}</h4></a>
         <p class="card-text">Published: {{ book.year_published }}</p>
         {% for k, v in book.warehouses.items() %}
         <h4>
