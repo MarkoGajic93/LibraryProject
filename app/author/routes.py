@@ -2,7 +2,7 @@ from flask import render_template, flash, url_for
 from werkzeug.utils import redirect
 
 from app.author import author_bp
-from app.author.forms import NewAuthorForm, DeleteAuthorForm
+from app.author.forms import NewAuthorForm, DeleteAuthorForm, EditAuthorForm
 from db.db_service import get_db
 
 
@@ -42,8 +42,22 @@ def delete():
     form = DeleteAuthorForm()
     form.set_choices(cursor)
     if form.validate_on_submit():
-        cursor.execute("""DELETE FROM author WHERE id=%s""", (form.name.data,))
+        cursor.execute("""DELETE FROM author WHERE id=%s""", (form.author.data,))
         conn.commit()
         flash("Author deleted successfully.", "success")
         return redirect(url_for("author.view_all"))
     return render_template("delete_author.html", form=form)
+
+@author_bp.route("/edit", methods=["GET", "POST"])
+def edit():
+    conn = get_db()
+    cursor = conn.cursor()
+    form = EditAuthorForm()
+    form.set_choices(cursor)
+    if form.validate_on_submit():
+        cursor.execute("""UPDATE author SET name=%s, biography=%s WHERE id=%s""",
+                       (form.name.data, form.biography.data, form.author.data))
+        conn.commit()
+        flash("Author updated successfully.", "success")
+        return redirect(url_for("author.view_all"))
+    return render_template("edit_author.html", form=form)
