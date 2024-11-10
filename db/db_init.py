@@ -17,6 +17,7 @@ c.execute("DROP TABLE IF EXISTS rental_book")
 c.execute("""CREATE TABLE member(
                     email           VARCHAR(254) PRIMARY KEY,
                     name            TEXT NOT NULL,
+                    password        TEXT NOT NULL,
                     age             INTEGER NOT NULL,
                     phone_number    TEXT
 )""")
@@ -67,9 +68,9 @@ c.execute("""CREATE TABLE rental_book (
 )""")
 
 members = [
-    ("admin@example.com", "Test Admin", 25, "111-111-1111")
+    ("admin@example.com", "Admin", "admin", 25, "111-111-1111")
 ]
-c.executemany("INSERT INTO member (email, name, age, phone_number) VALUES (%s,%s,%s,%s)", members)
+c.executemany("INSERT INTO member (email, name, password, age, phone_number) VALUES (%s,%s,%s,%s,%s)", members)
 
 authors = [
     ("Franz Kafka", "(3 July 1883 – 3 June 1924) Was an Austrian-Czech novelist and writer from Prague, "
