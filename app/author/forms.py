@@ -15,11 +15,17 @@ class NewAuthorForm(FlaskForm):
     submit = SubmitField("Add author")
 
 class DeleteAuthorForm(FlaskForm):
-    name = SelectField("Name")
-    submit = SubmitField("Delete author")
+    author = SelectField("Author")
+    submit = SubmitField("Submit")
 
     def set_choices(self, cursor):
         cursor.execute(f"SELECT id, name FROM author")
         options = cursor.fetchall()
-        self.name.choices = options
+        self.author.choices = options
 
+class EditAuthorForm(DeleteAuthorForm):
+    name = StringField("Edit name",
+                       validators=[InputRequired("Input is required!"),
+                                   DataRequired("Data is required!")])
+    biography = TextAreaField("Edit biography",
+                              validators=[Length(max=200, message="Biography must be maximum 00 characters long")])
