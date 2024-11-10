@@ -34,9 +34,21 @@
           <li class="nav-item {{ 'active' if active_page == 'warehouse' else '' }}">
             <a href="{{ url_for('warehouse.view_all') }}" class="nav-link">Warehouses</a>
           </li>
+          {% if session.get('user') %}
+          <li class="nav-item {{ 'active' if active_page == '' else '' }}">
+            <a href="#" class="nav-link">{{ session['user'] }}</a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('auth.logout') }}" onclick="return confirm('Are you sure you want to logout?');" class="nav-link">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item {{ 'active' if active_page == 'login' else '' }}">
+            <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+          </li>
           <li class="nav-item {{ 'active' if active_page == 'register' else '' }}">
             <a href="{{ url_for('auth.register') }}" class="nav-link">Register</a>
           </li>
+          {% endif %}
         </ul>
       </div>
     </div>
