@@ -36,7 +36,7 @@ class NewBookForm(FlaskForm):
             self.warehouse.choices = options
 
 class DeleteAllBooksForm(FlaskForm):
-    submit = SubmitField("Delete all copies")
+    submit = SubmitField("Delete all")
 
 class EditBookWarehouseCopies(FlaskForm):
     warehouse = SelectField("Warehouse")

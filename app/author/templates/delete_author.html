@@ -10,8 +10,8 @@
     <form method="POST" action="{{ url_for('author.delete') }}">
       {{ form.hidden_tag() }}
       <div class="form-group">
-        {{ form.name.label }}
-        {{ form.name(class="form-control") }}
+        {{ form.author.label }}
+        {{ form.author(class="form-control") }}
       </div>
       <hr>
       {{ form.submit(class="btn btn-danger", onclick="return confirm('Are you sure you want to delete this author?');") }}
