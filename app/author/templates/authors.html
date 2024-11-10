@@ -18,7 +18,7 @@
           <div class="card h-100">
             <div class="card-body">
               <h4 class="card-title">
-                <a href="#">{{ author.name }}</a>
+                <a href="{{ url_for('author.author', author_id=author.id) }}">{{ author.name }}</a>
               </h4>
             </div>
             <div class="card-footer">
