@@ -82,21 +82,30 @@ def manage_copies(book_id: uuid.UUID):
         cursor.execute("""SELECT id, name FROM warehouse""")
         warehouses = cursor.fetchall()
         edit_form.warehouse.choices = warehouses
+
         if edit_form.validate_on_submit():
             selected_warehouse = next((warehouse[1] for warehouse in warehouses if warehouse[0] == edit_form.warehouse.data))
+
             if edit_form.quantity.data == 0:
                 cursor.execute("""DELETE FROM warehouse_book WHERE warehouse_id=%s AND book_id=%s""",
                                (edit_form.warehouse.data, book_dict["id"]))
+                if not get_book_data(cursor, book_dict["id"]):
+                    cursor.execute("""DELETE FROM book WHERE id=%s""", (book_dict["id"],))
+
             if selected_warehouse in book_dict["warehouses"].keys():
                 cursor.execute("""UPDATE warehouse_book SET quantity=%s WHERE warehouse_id=%s AND book_id=%s""",
                                (edit_form.quantity.data, edit_form.warehouse.data, book_dict["id"]))
+
             else:
                 cursor.execute("""INSERT INTO warehouse_book (warehouse_id, book_id, quantity) VALUES (%s,%s,%s)""",
                                (edit_form.warehouse.data, book_dict["id"], edit_form.quantity.data))
+
             conn.commit()
             flash(f"Book {book_dict['title']} updated successfully.", "success")
             return redirect(url_for('book.book', book_id=book_id))
+
         return render_template("edit_copies.html", book=book_dict, editForm=edit_form)
+
     else:
         flash("That book doesnt exist", "danger")
         return redirect(url_for("home.home"))
