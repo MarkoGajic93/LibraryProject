@@ -82,27 +82,36 @@ def manage_copies(book_id: uuid.UUID):
         cursor.execute("""SELECT id, name FROM warehouse""")
         warehouses = cursor.fetchall()
         edit_form.warehouse.choices = warehouses
+
         if edit_form.validate_on_submit():
             selected_warehouse = next((warehouse[1] for warehouse in warehouses if warehouse[0] == edit_form.warehouse.data))
+
             if edit_form.quantity.data == 0:
                 cursor.execute("""DELETE FROM warehouse_book WHERE warehouse_id=%s AND book_id=%s""",
                                (edit_form.warehouse.data, book_dict["id"]))
+                if not get_book_data(cursor, book_dict["id"]):
+                    cursor.execute("""DELETE FROM book WHERE id=%s""", (book_dict["id"],))
+
             if selected_warehouse in book_dict["warehouses"].keys():
                 cursor.execute("""UPDATE warehouse_book SET quantity=%s WHERE warehouse_id=%s AND book_id=%s""",
                                (edit_form.quantity.data, edit_form.warehouse.data, book_dict["id"]))
+
             else:
                 cursor.execute("""INSERT INTO warehouse_book (warehouse_id, book_id, quantity) VALUES (%s,%s,%s)""",
                                (edit_form.warehouse.data, book_dict["id"], edit_form.quantity.data))
+
             conn.commit()
             flash(f"Book {book_dict['title']} updated successfully.", "success")
             return redirect(url_for('book.book', book_id=book_id))
+
         return render_template("edit_copies.html", book=book_dict, editForm=edit_form)
+
     else:
         flash("That book doesnt exist", "danger")
         return redirect(url_for("home.home"))
 
 def get_book_data(cursor, book_id=None) -> list[tuple]:
-    cursor.execute("""SELECT b.id, b.title, b.year_published, a.name, w.name, wb.quantity FROM book AS b
+    cursor.execute("""SELECT b.id, b.title, b.year_published, a.name, a.id, w.name, wb.quantity FROM book AS b
                       INNER JOIN author AS a ON b.author_id=a.id
                       INNER JOIN warehouse_book AS wb ON wb.book_id=b.id
                       INNER JOIN warehouse AS w ON w.id=wb.warehouse_id WHERE b.id=COALESCE(%s, b.id)""",
@@ -116,14 +125,16 @@ def generate_book_dict(data: list[tuple]) -> dict:
         title = row[1]
         year_published = row[2]
         author = row[3]
-        warehouse = row[4]
-        quantity = row[5]
+        author_id = row[4]
+        warehouse = row[5]
+        quantity = row[6]
         if book_id not in book_dict:
             book_dict[book_id] = {
                 'id': book_id,
                 'title': title,
                 'year_published': year_published,
                 'author': author,
+                'author_id': author_id,
                 'warehouses': {}
             }
         book_dict[book_id]['warehouses'][warehouse] = quantity
