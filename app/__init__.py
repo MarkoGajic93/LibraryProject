@@ -21,4 +21,7 @@ def create_app(config_env = app_env):
     from app.author import author_bp
     app.register_blueprint(author_bp, url_prefix="/authors")
 
+    from app.warehouse import warehouse_bp
+    app.register_blueprint(warehouse_bp, url_prefix="/warehouses")
+
     return app

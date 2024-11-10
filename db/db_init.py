@@ -38,11 +38,11 @@ c.execute("""CREATE TABLE book(
                     title           TEXT NOT NULL,
                     year_published  INTEGER NOT NULL,
                     author_id       UUID,
-                    FOREIGN KEY(author_id) REFERENCES author(id)
+                    FOREIGN KEY(author_id) REFERENCES author(id) ON DELETE CASCADE
 )""")
 
 c.execute("""CREATE TABLE warehouse_book(
-                    warehouse_id      UUID NOT NULL,
+                    warehouse_id    UUID NOT NULL,
                     book_id         UUID NOT NULL,
                     quantity        INTEGER,
                     PRIMARY KEY (warehouse_id, book_id),
