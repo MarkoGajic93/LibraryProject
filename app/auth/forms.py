@@ -22,3 +22,20 @@ class MemberRegisterForm(FlaskForm):
         cursor.execute("""SELECT email FROM member WHERE email=%s""", (field.data,))
         if cursor.fetchone():
             raise ValidationError("Email already exists.")
+
+class MemberLoginForm(FlaskForm):
+    email = EmailField("Email",
+                       validators=[InputRequired("Input is required!"),
+                                   DataRequired("Data is required!")]
+                       )
+    password = PasswordField("Password",
+                             validators=[InputRequired("Input is required"),
+                                         DataRequired("Data is required")])
+    submit = SubmitField("Login")
+
+    def validate_email(form, field):
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT email FROM member WHERE email=%s""", (field.data,))
+        if not cursor.fetchone():
+            raise ValidationError("There is no member with that email")
