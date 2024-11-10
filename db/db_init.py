@@ -1,4 +1,5 @@
 import psycopg2
+from werkzeug.security import generate_password_hash
 
 from config import DevelopmentConfig
 
@@ -68,7 +69,7 @@ c.execute("""CREATE TABLE rental_book (
 )""")
 
 members = [
-    ("admin@example.com", "Admin", "admin", 25, "111-111-1111")
+    ("admin@example.com", "Admin", generate_password_hash("admin"), 25, "111-111-1111")
 ]
 c.executemany("INSERT INTO member (email, name, password, age, phone_number) VALUES (%s,%s,%s,%s,%s)", members)
 
