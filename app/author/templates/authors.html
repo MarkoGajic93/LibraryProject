@@ -5,9 +5,11 @@
   <div class="row">
     <div class="col-lg-3">
       <div class="my-4">
+        {% if current_user.get('name') == 'Admin' %}
         <a href="{{ url_for('author.add_new') }}" class="btn btn-primary form-control">Add new author</a><hr>
         <a href="{{ url_for('author.edit') }}" class="btn btn-secondary form-control">Edit author</a><hr>
         <a href="{{ url_for('author.delete') }}" class="btn btn-danger form-control">Delete author</a><hr>
+        {% endif %}
       </div>
     </div>
     <div class="col-lg-9">

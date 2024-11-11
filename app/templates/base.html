@@ -25,18 +25,20 @@
           <li class="nav-item {{ 'active' if active_page == 'home' else '' }}">
             <a href="{{ url_for('home.home') }}" class="nav-link">Home</a>
           </li>
+          {% if current_user.get('name') == 'Admin' %}
           <li class="nav-item {{ 'active' if active_page == 'book' else '' }}">
             <a href="{{ url_for('book.add_new') }}" class="nav-link">Add new book</a>
-          </li>
-          <li class="nav-item {{ 'active' if active_page == 'author' else '' }}">
-            <a href="{{ url_for('author.view_all') }}" class="nav-link">Authors</a>
           </li>
           <li class="nav-item {{ 'active' if active_page == 'warehouse' else '' }}">
             <a href="{{ url_for('warehouse.view_all') }}" class="nav-link">Warehouses</a>
           </li>
-          {% if session.get('user') %}
+          {% endif %}
+          <li class="nav-item {{ 'active' if active_page == 'author' else '' }}">
+            <a href="{{ url_for('author.view_all') }}" class="nav-link">Authors</a>
+          </li>
+          {% if current_user.get('name') %}
           <li class="nav-item {{ 'active' if active_page == '' else '' }}">
-            <a href="#" class="nav-link">{{ session['user'] }}</a>
+            <a href="#" class="nav-link">{{ current_user['name'] }}</a>
           </li>
           <li class="nav-item">
             <a href="{{ url_for('auth.logout') }}" onclick="return confirm('Are you sure you want to logout?');" class="nav-link">Logout</a>
