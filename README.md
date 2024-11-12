@@ -22,3 +22,6 @@ To set up and run the application, follow these steps:
 4. **Start the Application**
    - Launch the application by running:
      `run.py`
+
+**Note:**
+To login as admine use - email: `admin@example.com`, password: `admin`
