@@ -1,11 +1,11 @@
 import uuid
 
-from flask import render_template, flash, url_for, abort
+from flask import render_template, flash, url_for, abort, g, current_app
 from werkzeug.utils import redirect
 
 from app.auth.routes import is_admin, get_current_user
 from app.book import book_bp
-from app.book.forms import NewBookForm, DeleteAllBooksForm, EditBookWarehouseCopies
+from app.book.forms import NewBookForm, DeleteAllBooksForm, EditBookWarehouseCopies, RentBookForm
 from db.db_service import get_db
 
 
@@ -63,12 +63,16 @@ def book(book_id: uuid.UUID):
     conn = get_db()
     cursor = conn.cursor()
     delete_all_books_form = DeleteAllBooksForm()
+    rent_book_form = RentBookForm()
 
     book_data = get_book_data(cursor, book_id)
     book_dict = {}
     if book_data:
         book_dict = next(iter(generate_book_dict(book_data).values()))
-        return render_template("book.html", book=book_dict, deleteAllBooksForm=delete_all_books_form)
+        return render_template("book.html",
+                               book=book_dict,
+                               deleteAllBooksForm=delete_all_books_form,
+                               rentBookForm=rent_book_form)
     else:
         flash("That book doesnt exist", "danger")
         return redirect(url_for("home.home"))
@@ -163,3 +167,4 @@ def delete_all(book_id: uuid.UUID):
     else:
         flash(f"Book {title} doesnt exist.", "danger")
     return redirect(url_for("home.home"))
+

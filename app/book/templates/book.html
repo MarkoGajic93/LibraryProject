@@ -11,6 +11,11 @@
       {{ deleteAllBooksForm.hidden_tag() }}
       {{ deleteAllBooksForm.submit(class="btn btn-danger", onclick="return confirm('Are you sure you want to delete all copies of this book from all warehouses?');") }}
     </form>
+    {% elif current_user.get('email') %}
+    <form class="rent-form" method="POST" action="{{ url_for('rent.rent', book_id=book.id) }}">
+      {{ rentBookForm.hidden_tag() }}
+      {{ rentBookForm.submit(class="btn btn-primary", onclick="return confirm('This book will be added to your rent basket, proceed?');") }}
+    </form>
     {% endif %}
   </div>
   <div class="col-lg-9">

@@ -38,6 +38,9 @@ class NewBookForm(FlaskForm):
 class DeleteAllBooksForm(FlaskForm):
     submit = SubmitField("Delete all")
 
+class RentBookForm(FlaskForm):
+    submit = SubmitField("Add to basket")
+
 class EditBookWarehouseCopies(FlaskForm):
     warehouse = SelectField("Warehouse")
     quantity = IntegerField("Quantity",

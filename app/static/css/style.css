@@ -4,3 +4,6 @@ body {
 .delete-form {
   display: inline;
 }
+.rent-form input[type="submit"] {
+  width: 150px;
+}
