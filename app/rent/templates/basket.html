@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% set active_page = 'basket' %}
+
+{% block title %}{{ current_user.get('name') }} basket - {% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-3 my-4">
+
+  </div>
+  <div class="col-lg-9">
+    <div class="card mt-4">
+      <div class="card-body">
+        {% if books %}
+        {% for book in books %}
+        <h3 class="card-title">{{ book[0] }}</h3><hr>
+        {% endfor %}
+        {% else %}
+        <h3 class="card-title">Basket is empty</h3>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

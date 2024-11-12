@@ -37,6 +37,11 @@
             <a href="{{ url_for('author.view_all') }}" class="nav-link">Authors</a>
           </li>
           {% if current_user.get('name') %}
+          {% if current_user.get('email') != config['ADMIN_EMAIL'] %}
+          <li class="nav-item {{ 'active' if active_page == 'basket' else '' }}">
+            <a href="{{ url_for('rent.view_basket') }}" class="nav-link">My basket</a>
+          </li>
+          {% endif %}
           <li class="nav-item {{ 'active' if active_page == '' else '' }}">
             <a href="#" class="nav-link">{{ current_user['name'] }}</a>
           </li>
