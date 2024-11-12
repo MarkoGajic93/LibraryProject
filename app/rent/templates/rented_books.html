@@ -5,13 +5,13 @@
   <div class="row">
     <div class="col-lg-3">
       <div class="my-4">
-
+        <a href="{{ url_for('rent.return_book') }}" class="btn btn-primary form-control">Return book</a><hr>
       </div>
     </div>
     <div class="col-lg-9">
       <div class="row my-5 card-wrapper">
         {% if rents %}
-        {% for book in rents[current_user['email']]['books'] %}
+        {% for book in rents[current_user['email']]['books'].values() | list %}
         <div class="col-lg-4 col-md-6 mb-4">
           <div class="card h-100">
             <div class="card-body">

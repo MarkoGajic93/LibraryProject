@@ -10,7 +10,7 @@ class NewAuthorForm(FlaskForm):
                                     DataRequired("Data is required!")])
 
     biography = TextAreaField("Biography",
-                              validators=[Length(max=200, message="Biography must be maximum 00 characters long")])
+                              validators=[Length(max=200, message="Biography must be maximum 200 characters long")])
 
     submit = SubmitField("Add author")
 
