@@ -69,14 +69,14 @@ def checkout():
         return redirect(url_for("home.home"))
 
     try:
+        books = list(get_basket().keys())
         basket = session.get("member_basket")
-        basket.pop(get_current_user().get("email"))  # KeyError
+        basket.pop(get_current_user().get("email"))
         conn = get_db()
         cursor = conn.cursor()
         cursor.execute("""INSERT INTO rental (borrow_date, return_date, member_id) VALUES (%s,%s,%s) RETURNING id""",
                        (datetime.now().date(), datetime.now().date()+timedelta(days=14), member_id))
         rental_id = cursor.fetchone()
-        books = list(get_basket().keys())
         for book in books:
             cursor.execute("""INSERT INTO rental_book (rental_id, book_id) VALUES (%s,%s)""",
                            (rental_id, book))
@@ -85,6 +85,34 @@ def checkout():
     except (KeyError, AttributeError):
         flash("Your basket is empty.", "danger")
     return redirect(url_for("home.home"))
+
+@rent_bp.route("/rents")
+def rents():
+    member_id = get_current_user().get('email')
+    if not member_id:
+        flash("You need to be logged in.", "danger")
+        return redirect(url_for("home.home"))
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""SELECT b.title, r.borrow_date, r.return_date FROM rental AS r
+                      INNER JOIN rental_book AS rb ON rb.rental_id=r.id 
+                      INNER JOIN book AS b ON rb.book_id=b.id
+                      WHERE r.member_id=%s""", (member_id,))
+    data = cursor.fetchall()
+    rent_dict = {}
+    for row in data:
+        book = row[0]
+        borrow_date = row[1]
+        return_date = row[2]
+        if member_id not in rent_dict:
+            rent_dict[member_id] = {
+                'borrow_date': borrow_date,
+                'return_date': return_date,
+                'books': []
+            }
+        rent_dict[member_id]['books'].append(book)
+    return render_template("rented_books.html", rents=rent_dict)
 
 def get_basket() -> dict:
     basket = session.get("member_basket")
