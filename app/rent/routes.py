@@ -2,8 +2,9 @@ import uuid
 
 from flask import flash, redirect, url_for, current_app, g, render_template, session
 
-from app.auth.routes import get_current_user
+from app.auth.routes import get_current_user, restore_from_basket
 from app.rent import rent_bp
+from app.rent.forms import RestoreBasketForm
 from db.db_service import get_db
 
 
@@ -45,7 +46,18 @@ def view_basket():
         return redirect(url_for("home.home"))
 
     books_in_basket = get_basket()
-    return render_template("basket.html", books=list(books_in_basket.values()))
+    restore_basket_form = RestoreBasketForm()
+    return render_template("basket.html", books=list(books_in_basket.values()), restoreBasketForm=restore_basket_form)
+
+@rent_bp.route("/clear", methods=["POST"])
+def clear_basket():
+    if not get_current_user().get('email'):
+        flash("You need to be logged in.", "danger")
+        return redirect(url_for("home.home"))
+
+    restore_from_basket()
+    flash("Basket cleared.", "success")
+    return redirect(url_for("home.home"))
 
 def get_basket() -> dict:
     basket = session.get("member_basket")
