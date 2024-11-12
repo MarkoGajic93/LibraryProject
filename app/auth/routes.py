@@ -1,4 +1,4 @@
-from flask import render_template, flash, url_for, session, g
+from flask import render_template, flash, url_for, session, g, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import redirect
 
@@ -61,3 +61,6 @@ def get_current_user() -> dict:
         else:
             _current_user = {}
     return _current_user
+
+def is_admin(current_user) -> bool:
+    return get_current_user().get("email") == current_app.config["ADMIN_EMAIL"]

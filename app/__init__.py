@@ -1,16 +1,20 @@
 import os
 
-from flask import Flask
+from flask import Flask, current_app
 
 import config
 from db.db_service import close_db
 
 app_env = os.environ.get("FLASK_ENV")
 
+def inject_config():
+    return dict(config=current_app.config)
+
 def create_app(config_env = app_env):
     app = Flask(__name__)
     app.config.from_object(f"config.{config_env.capitalize()}Config")
     app.teardown_appcontext(close_db)
+    app.context_processor(inject_config)
 
     from app.auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix="/auth")

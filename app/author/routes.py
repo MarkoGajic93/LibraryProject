@@ -1,8 +1,9 @@
 import uuid
 
-from flask import render_template, flash, url_for
+from flask import render_template, flash, url_for, abort
 from werkzeug.utils import redirect
 
+from app.auth.routes import is_admin, get_current_user
 from app.author import author_bp
 from app.author.forms import NewAuthorForm, DeleteAuthorForm, EditAuthorForm
 from db.db_service import get_db
@@ -57,6 +58,9 @@ def view_all():
 
 @author_bp.route("/new", methods=["GET", "POST"])
 def add_new():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = NewAuthorForm()
@@ -70,6 +74,9 @@ def add_new():
 
 @author_bp.route("/delete", methods=["GET", "POST"])
 def delete():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = DeleteAuthorForm()
@@ -83,6 +90,9 @@ def delete():
 
 @author_bp.route("/edit", methods=["GET", "POST"])
 def edit():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = EditAuthorForm()
