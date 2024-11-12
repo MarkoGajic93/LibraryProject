@@ -5,11 +5,13 @@
 {% block content %}
 <div class="row">
   <div class="col-lg-3 my-4">
+    {% if current_user.get('email') == config['ADMIN_EMAIL'] %}
     <a href="{{ url_for('book.manage_copies', book_id=book.id) }}" class="btn btn-primary">Manage copies</a>
     <form class="delete-form" method="POST" action="{{ url_for('book.delete_all', book_id=book.id) }}">
       {{ deleteAllBooksForm.hidden_tag() }}
       {{ deleteAllBooksForm.submit(class="btn btn-danger", onclick="return confirm('Are you sure you want to delete all copies of this book from all warehouses?');") }}
     </form>
+    {% endif %}
   </div>
   <div class="col-lg-9">
     <div class="card mt-4">

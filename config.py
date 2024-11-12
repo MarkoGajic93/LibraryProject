@@ -19,6 +19,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     DB_HOST = "localhost"
     DB_NAME = "library"
+    ADMIN_EMAIL = "admin@example.com"
     try:
         DATABASE = Config.get_db_uri(host=DB_HOST, db_name=DB_NAME)
     except ValueError as e:

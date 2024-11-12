@@ -1,8 +1,9 @@
 import uuid
 
-from flask import render_template, flash, url_for
+from flask import render_template, flash, url_for, abort
 from werkzeug.utils import redirect
 
+from app.auth.routes import is_admin, get_current_user
 from app.warehouse import warehouse_bp
 from app.warehouse.forms import NewWarehouseForm, EditWarehouseForm, DeleteWarehouseForm
 from db.db_service import get_db
@@ -10,6 +11,9 @@ from db.db_service import get_db
 
 @warehouse_bp.route("/<uuid:warehouse_id>")
 def warehouse(warehouse_id: uuid.UUID):
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""SELECT w.id, w.name, w.address, b.id, b.title FROM warehouse AS w
@@ -42,6 +46,9 @@ def warehouse(warehouse_id: uuid.UUID):
 
 @warehouse_bp.route("/")
 def view_all():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""SELECT id, name, address FROM warehouse""")
@@ -58,6 +65,9 @@ def view_all():
 
 @warehouse_bp.route("/new", methods=["GET", "POST"])
 def add_new():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = NewWarehouseForm()
@@ -71,6 +81,9 @@ def add_new():
 
 @warehouse_bp.route("/delete", methods=["GET", "POST"])
 def delete():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = DeleteWarehouseForm()
@@ -84,6 +97,9 @@ def delete():
 
 @warehouse_bp.route("/edit", methods=["GET", "POST"])
 def edit():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = EditWarehouseForm()

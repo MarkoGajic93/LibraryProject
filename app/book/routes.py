@@ -1,8 +1,9 @@
 import uuid
 
-from flask import render_template, flash, url_for
+from flask import render_template, flash, url_for, abort
 from werkzeug.utils import redirect
 
+from app.auth.routes import is_admin, get_current_user
 from app.book import book_bp
 from app.book.forms import NewBookForm, DeleteAllBooksForm, EditBookWarehouseCopies
 from db.db_service import get_db
@@ -10,6 +11,9 @@ from db.db_service import get_db
 
 @book_bp.route("/new", methods=["GET", "POST"])
 def add_new():
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     form = _setup_form(cursor)
@@ -71,6 +75,9 @@ def book(book_id: uuid.UUID):
 
 @book_bp.route("/edit/<uuid:book_id>", methods=["GET", "POST"])
 def manage_copies(book_id: uuid.UUID):
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
 
@@ -142,6 +149,9 @@ def generate_book_dict(data: list[tuple]) -> dict:
 
 @book_bp.route("/delete_all/<uuid:book_id>", methods=["POST"])
 def delete_all(book_id: uuid.UUID):
+    if not is_admin(get_current_user()):
+        abort(401)
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("""SELECT id, title FROM book WHERE id=%s""", (str(book_id),))
