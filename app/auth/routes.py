@@ -80,14 +80,15 @@ def restore_from_basket():
     basket = session.get("member_basket")
     if not basket:
         return
+    conn = get_db()
+    cursor = conn.cursor()
     books_in_basket = basket[get_current_user().get("email")]
     for book_id in books_in_basket.keys():
         warehouse_id = books_in_basket[book_id][1]
-        conn = get_db()
-        cursor = conn.cursor()
         cursor.execute("""SELECT quantity FROM warehouse_book WHERE book_id=%s AND warehouse_id=%s""", (book_id, warehouse_id))
         quantity = cursor.fetchone()[0]
         cursor.execute("""UPDATE warehouse_book SET quantity=%s 
                           WHERE warehouse_id=%s AND book_id=%s""",
                        ((quantity + 1), warehouse_id, book_id))
-        conn.commit()
+    conn.commit()
+    session.pop("member_basket")

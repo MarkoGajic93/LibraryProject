@@ -6,9 +6,13 @@
 {% block content %}
 <div class="row">
   <div class="col-lg-3 my-4">
+    <form class="rent-form" method="POST" action="{{ url_for('rent.checkout') }}">
+      {{ checkoutForm.hidden_tag() }}
+      {{ checkoutForm.submit(class="btn btn-primary", onclick="return confirm('Order all books in your basket?');") }}
+    </form><hr>
     <form class="rent-form" method="POST" action="{{ url_for('rent.clear_basket') }}">
       {{ restoreBasketForm.hidden_tag() }}
-      {{ restoreBasketForm.submit(class="btn btn-primary", onclick="return confirm('All books will be restored from your basket, proceed?');") }}
+      {{ restoreBasketForm.submit(class="btn btn-danger", onclick="return confirm('All books will be restored from your basket, proceed?');") }}
     </form>
   </div>
   <div class="col-lg-9">

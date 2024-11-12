@@ -1,10 +1,11 @@
 import uuid
+from datetime import datetime, timedelta
 
 from flask import flash, redirect, url_for, current_app, g, render_template, session
 
 from app.auth.routes import get_current_user, restore_from_basket
 from app.rent import rent_bp
-from app.rent.forms import RestoreBasketForm
+from app.rent.forms import RestoreBasketForm, CheckoutForm
 from db.db_service import get_db
 
 
@@ -47,7 +48,8 @@ def view_basket():
 
     books_in_basket = get_basket()
     restore_basket_form = RestoreBasketForm()
-    return render_template("basket.html", books=list(books_in_basket.values()), restoreBasketForm=restore_basket_form)
+    checkout_form = CheckoutForm()
+    return render_template("basket.html", books=list(books_in_basket.values()), restoreBasketForm=restore_basket_form, checkoutForm=checkout_form)
 
 @rent_bp.route("/clear", methods=["POST"])
 def clear_basket():
@@ -57,6 +59,31 @@ def clear_basket():
 
     restore_from_basket()
     flash("Basket cleared.", "success")
+    return redirect(url_for("home.home"))
+
+@rent_bp.route("/checkout", methods=["POST"])
+def checkout():
+    member_id = get_current_user().get('email')
+    if not member_id:
+        flash("You need to be logged in.", "danger")
+        return redirect(url_for("home.home"))
+
+    try:
+        basket = session.get("member_basket")
+        basket.pop(get_current_user().get("email"))  # KeyError
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO rental (borrow_date, return_date, member_id) VALUES (%s,%s,%s) RETURNING id""",
+                       (datetime.now().date(), datetime.now().date()+timedelta(days=14), member_id))
+        rental_id = cursor.fetchone()
+        books = list(get_basket().keys())
+        for book in books:
+            cursor.execute("""INSERT INTO rental_book (rental_id, book_id) VALUES (%s,%s)""",
+                           (rental_id, book))
+        conn.commit()
+        flash("Order made successfully.", "success")
+    except (KeyError, AttributeError):
+        flash("Your basket is empty.", "danger")
     return redirect(url_for("home.home"))
 
 def get_basket() -> dict:

@@ -39,7 +39,7 @@ class DeleteAllBooksForm(FlaskForm):
     submit = SubmitField("Delete all")
 
 class RentBookForm(FlaskForm):
-    submit = SubmitField("Rent book")
+    submit = SubmitField("Add to basket")
 
 class EditBookWarehouseCopies(FlaskForm):
     warehouse = SelectField("Warehouse")
