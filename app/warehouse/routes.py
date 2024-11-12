@@ -99,7 +99,7 @@ def delete():
 def edit():
     if not is_admin(get_current_user()):
         abort(401)
-        
+
     conn = get_db()
     cursor = conn.cursor()
     form = EditWarehouseForm()

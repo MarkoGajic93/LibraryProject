@@ -13,6 +13,10 @@ def inject_current_user():
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
+    if get_current_user().get('email'):
+        flash("You are already registered.", "danger")
+        return redirect(url_for("home.home"))
+
     form = MemberRegisterForm()
     if form.validate_on_submit():
         conn = get_db()
@@ -27,6 +31,10 @@ def register():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    if get_current_user().get('email'):
+        flash("You are already logged in.", "danger")
+        return redirect(url_for("home.home"))
+
     conn = get_db()
     cursor = conn.cursor()
     form = MemberLoginForm()
